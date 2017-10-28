@@ -28,9 +28,9 @@ $(function () {
   };
 
   ws.onmessage = function (event) {
-    const data = event.data.split(',');
+    const data = JSON.parse(event.data);
     for (let i = 0; i < data.length; i += 1) {
-      $('#logInfor').append('<p>' + data[i]+'</p>');
+      $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
       $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
     }
   };
@@ -293,4 +293,15 @@ function labelFormatter(label, series) {
     + label
     + "<br/>"
     + Math.round(series.percent) + "%</div>";
+}
+
+/*
+* Create log string
+ */
+function createLogString(log) {
+  const {
+    serverName, serverIp, method, status, path, responseTime, contentLength,
+  } = log;
+
+  return `<span style="color: red; font-weight: bold;">${serverName}</span> <span>${serverIp}</span> <span>${method}</span> <span>${path}</span> <span style="color: yellow">${status}</span> <span>${responseTime} ms</span> - <span>${contentLength}</span>`;
 }

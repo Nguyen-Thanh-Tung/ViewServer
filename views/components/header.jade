@@ -1,0 +1,49 @@
+header.main-header
+    // Logo
+    a.logo(href='#')
+        span.logo-mini
+            b A
+            | LT
+        // logo for regular state and mobile devices
+        span.logo-lg
+            b Admin
+            | LTE
+    // Header Navbar: style can be found in header.less
+    nav.navbar.navbar-static-top(role='navigation')
+        // Sidebar toggle button
+        a.sidebar-toggle(href='#', data-toggle='offcanvas', role='button')
+            span.sr-only Toggle navigation
+            span.icon-bar
+            span.icon-bar
+            span.icon-bar
+        .navbar-custom-menu
+            ul.nav.navbar-nav
+                li.dropdown.user.user-menu
+                    a.dropdown-toggle(href='#', data-toggle='dropdown')
+                        img.user-image(src='/dist/img/luffy.png', alt='User Image')
+                        span.hidden-xs Admin
+                    ul.dropdown-menu
+                        // User image
+                        li.user-header
+                            img.img-circle(src='/dist/img/luffy.png', alt='User Image')
+                            p
+                                | Alexander Pierce - Web Developer
+                                small Member since Nov. 2012
+                        // Menu Body
+                        li.user-body
+                            .col-xs-4.text-center
+                                a(href='#') Followers
+                            .col-xs-4.text-center
+                                a(href='#') Sales
+                            .col-xs-4.text-center
+                                a(href='#') Friends
+                        // Menu Footer
+                        li.user-footer
+                            .pull-left
+                                a.btn.btn-default.btn-flat(href='#') Profile
+                            .pull-right
+                                a.btn.btn-default.btn-flat(href='#') Sign out
+                // Control Sidebar Toggle Button
+                li
+                    a(href='#', data-toggle='control-sidebar')
+                        i.fa.fa-gears

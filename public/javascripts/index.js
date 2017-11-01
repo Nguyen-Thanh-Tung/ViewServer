@@ -18,6 +18,8 @@ window.onload = function() {
 };
 
 $(function () {
+  let count = 0;
+  let countTemp = 0;
   /*
    * Real log
    */
@@ -30,8 +32,10 @@ $(function () {
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
     for (let i = 0; i < data.length; i += 1) {
+      count += 1;
       $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
-      $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
+      // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
+      $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 50);
     }
   };
 
@@ -47,13 +51,16 @@ $(function () {
   // be fetched from a server
   let data = [], totalPoints = 100;//Time
 
-  function getRandomData() {
+  function getEventPerSecond() {
     if (data.length > 0)
       data = data.slice(1);
     // Do a random walk
     while (data.length < totalPoints) {
-      const prev = data.length > 0 ? data[data.length - 1] : 500;
-      let y = prev + Math.random() * 1000 - 500;
+      // const prev = data.length > 0 ? data[data.length - 1] : 500;
+      // let y = prev + Math.random() * 1000 - 500;
+      let y = count - countTemp;
+      console.log(count + ':' + countTemp + ':' + y);
+      countTemp = count;
       if (y < 0) {
         y = 0;
       } else if (y > 20000) {
@@ -70,7 +77,7 @@ $(function () {
     return res;
   }
 
-  const interactive_plot = $.plot("#interactive", [getRandomData()], {
+  const interactive_plot = $.plot("#interactive", [getEventPerSecond()], {
     grid: {
       borderColor: "#f3f3f3",
       borderWidth: 1,
@@ -98,7 +105,7 @@ $(function () {
   let realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
 
   function update() {
-    interactive_plot.setData([getRandomData()]);
+    interactive_plot.setData([getEventPerSecond()]);
     // Since the axes don't change, we don't need to call plot.setupGrid()
     interactive_plot.draw();
     if (realtime === "on")

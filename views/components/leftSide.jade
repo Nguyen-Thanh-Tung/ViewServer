@@ -1,0 +1,46 @@
+aside.main-sidebar
+    // sidebar: style can be found in sidebar.less
+    section.sidebar
+        // Sidebar user panel
+        .user-panel
+            .pull-left.image
+                img.img-circle(src='/dist/img/luffy.png', alt='User Image')
+            .pull-left.info
+                p Admin
+                a(href='#')
+                    i.fa.fa-circle.text-success
+                    |  Online
+        // search form
+        form.sidebar-form(action='#', method='get')
+            .input-group
+                input.form-control(type='text', name='q', placeholder='Search...')
+                span.input-group-btn
+                    button#search-btn.btn.btn-flat(type='submit', name='search')
+                        i.fa.fa-search
+        // sidebar menu: : style can be found in sidebar.less
+        ul.sidebar-menu
+            li.header MAIN NAVIGATION
+            li.treeview.active
+                a(href='#')
+                    i.fa.fa-pie-chart
+                    span Charts
+                    i.fa.fa-angle-left.pull-right
+                ul.treeview-menu
+                    li.active
+                        a(href='#')
+                            i.fa.fa-circle-o
+                            |  Server Information
+            li
+                a(href='#')
+                    i.fa.fa-calendar
+                    span Calendar
+                    small.label.pull-right.bg-red 3
+            li.header CONFIGURATIONS
+            li
+                a(href='/config')
+                    i.fa.fa-circle-o.text-red
+                    span Enable/Disable Server
+            li
+                a(href='#')
+                    i.fa.fa-circle-o.text-aqua
+                    span Others

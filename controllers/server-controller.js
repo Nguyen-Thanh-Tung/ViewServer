@@ -1,8 +1,9 @@
 const Server = require('../models/Server');
 const request = require('request');
+const constants = require('../constants/constants');
 
 exports.getServerList = (req, res) => {
-  const perPage = 50;
+  const perPage = constants.numServerPerPage;
   let page = Math.max(0, req.query.page);
   if (!Number.isInteger(page)) {
     page = 0;
@@ -10,7 +11,7 @@ exports.getServerList = (req, res) => {
   const promise = Server.find({}).limit(perPage).skip(page * perPage).exec();
   promise.then((serverList) => {
     serverList.forEach((server) => {
-      request.get('http://localhost:' + server.port + '/check', (err, result) => {
+      request.get(constants.domain + ':' + server.port + constants.pathCheckServer, (err, result) => {
         if (result === 'ok') {
           server.status = 'online';
         } else {
@@ -29,3 +30,59 @@ exports.getServerList = (req, res) => {
 exports.testRequest = (req, res) => {
   res.render('test');
 };
+
+exports.testSystem = (req, res) => {
+  Server.aggregate([
+    {
+      $group: {
+        _id: '$server_ip',
+        count: {$sum: 1}
+      }
+    }
+  ], function (err, result) {
+    if (err) {
+      res.send('Error when get client');
+    } else {
+      const clientList = result.map((client) => {
+        return {
+          ip: client._id,
+          numberServer: client.count,
+        }
+      });
+      const server = {
+        ip: global.serverIp,
+      };
+      res.render('testSystem',{ clientList, server });
+    }
+  });
+};
+
+exports.deleteClient = (req, res) => {
+  const clientIp = req.body.clientIp;
+  if (clientIp) {
+    Server.remove({ server_ip: clientIp}, (err, result) => {
+      if (err) {
+        console.log(err.message);
+      } else {
+        res.json({
+          status: 200,
+          message: 'Xóa thành công.',
+        });
+      }
+    });
+  } else {
+    res.json({
+      status: 404,
+      message: 'Không tồn tại Ip',
+    });
+  }
+};
+
+exports.updateServerIp = (req, res) => {
+  global.serverIp = req.body.serverIp;
+  res.json({
+    status: 200,
+    message: 'Update success',
+  })
+};
+

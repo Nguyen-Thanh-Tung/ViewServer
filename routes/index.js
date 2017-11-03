@@ -10,5 +10,8 @@ router.get('/', (req, res) => {
 
 router.get('/config', serverController.getServerList);
 router.get('/test', serverController.testRequest);
+router.get('/testSystem', serverController.testSystem);
+router.post('/deleteClient', serverController.deleteClient);
+router.post('/updateServerIp', serverController.updateServerIp);
 
 module.exports = router;

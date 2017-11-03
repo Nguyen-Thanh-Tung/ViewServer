@@ -3,21 +3,20 @@ const app = express();
 const path = require('path');
 const http = require('http');
 const server = http.createServer(app);
-const mongoose = require('mongoose');
+const helpers = require('./helpers/helpers');
+const bodyParser = require('body-parser');
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')));
 
-connectDatabase = () => {
-  mongoose.connect('mongodb://127.0.0.1/logsystem', {
-    useMongoClient: true,
-  });
-  const db = mongoose.connection;
-  db.on('error', console.error.bind(console, 'Cant connect DB'));
-};
-connectDatabase();
+
+helpers.connectDatabase();
 const index = require('./routes/index');
+global.serverIp = '0.0.0.0';
 
 app.use('/', index);
 

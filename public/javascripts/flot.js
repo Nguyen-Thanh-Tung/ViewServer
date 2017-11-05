@@ -33,7 +33,7 @@ $(function () {
     const data = JSON.parse(event.data);
     for (let i = 0; i < data.length; i += 1) {
       count += 1;
-      messages += '<p>' + createLogString(data[i])+'</p>';
+      // messages += '<p>' + createLogString(data[i])+'</p>';
       // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
       // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
       // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
@@ -57,11 +57,13 @@ $(function () {
       data = data.slice(1);
     // Do a random walk
     while (data.length < totalPoints) {
-      const prev = 11500;
-      let y = prev + Math.random() * 1000;
-      // let y = (count - countTemp);
+      // const prev = 11500;
+      // let y = prev + Math.random() * 1000;
+      let y = count;
+      $('#eps').text(y);
       // console.log(count + ':' + countTemp + ':' + y);
-      countTemp = count;
+      count = 0;
+      // countTemp = count;
       if (y < 0) {
         y = 0;
       } else if (y > 20000) {
@@ -102,13 +104,13 @@ $(function () {
     }
   });
 
-  const updateInterval = 5000; //Fetch data ever x milliseconds
+  const updateInterval = 1000; //Fetch data ever x milliseconds
   let realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
 
   function update() {
     // $('#logInfor').text('');
-    $('#logInfor').append(messages);
-    $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval + 1000);
+    // $('#logInfor').append(messages);
+    // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval + 1000);
     messages = '';
     interactive_plot.setData([getEventPerSecond()]);
     // Since the axes don't change, we don't need to call plot.setupGrid()
@@ -138,109 +140,12 @@ $(function () {
 
 
   /*
-   * LINE CHART
-   * ----------
-   */
-  //LINE randomly generated data
-  const sin = [], cos = [];
-
-  for (let i = 0; i < 14; i += 0.5) {
-    sin.push([i, Math.sin(i)]);
-    cos.push([i, Math.cos(i)]);
-  }
-  const line_data1 = {
-    data: sin,
-    color: "#3c8dbc"
-  };
-  const line_data2 = {
-    data: cos,
-    color: "#00c0ef"
-  };
-
-  $.plot("#line-chart", [line_data1, line_data2], {
-    grid: {
-      hoverable: true,
-      borderColor: "#f3f3f3",
-      borderWidth: 1,
-      tickColor: "#f3f3f3"
-    },
-    series: {
-      shadowSize: 0,
-      lines: {
-        show: true
-      },
-      points: {
-        show: true
-      }
-    },
-    lines: {
-      fill: false,
-      color: ["#3c8dbc", "#f56954"]
-    },
-    yaxis: {
-      show: true,
-    },
-    xaxis: {
-      show: true
-    }
-  });
-
-  //Initialize tooltip on hover
-  $('<div class = "tooltip-inner" id="line-chart-tooltip"></div>').css({
-    position: "absolute",
-    display: "none",
-    opacity: 0.8
-  }).appendTo("body");
-
-  $("#line-chart").bind("plothover", function (event, pos, item) {
-    if (item) {
-      const x = item.datapoint[0].toFixed(2),
-        y = item.datapoint[1].toFixed(2);
-      $("#line-chart-tooltip").html(item.series.label + " of " + x + " = " + y)
-        .css({top: item.pageY + 5, left: item.pageX + 5})
-        .fadeIn(200);
-    } else {
-      $("#line-chart-tooltip").hide();
-    }
-  });
-  /* END LINE CHART */
-
-
-  /*
-   * FULL WIDTH STATIC AREA CHART
-   * -----------------
-   */
-  const areaData = [[2, 88.0], [3, 93.3], [4, 102.0], [5, 108.5], [6, 115.7], [7, 115.6],
-    [8, 124.6], [9, 130.3], [10, 134.3], [11, 141.4], [12, 146.5], [13, 151.7], [14, 159.9],
-    [15, 165.4], [16, 167.8], [17, 168.7], [18, 169.5], [19, 168.0]];
-
-  $.plot("#area-chart", [areaData], {
-    grid: {
-      borderWidth: 0
-    },
-    series: {
-      shadowSize: 0, // Drawing is faster without shadows
-      color: "#00c0ef"
-    },
-    lines: {
-      fill: true //Converts the line chart to area chart
-    },
-    yaxis: {
-      show: false
-    },
-    xaxis: {
-      show: false
-    }
-  });
-  /* END AREA CHART */
-
-
-  /*
-   * BAR CHART
+   * Bieu do cot
    * ---------
    */
-  const bar_data = {
-    data: [["January", 10], ["February", 8], ["March", 4], ["April", 13], ["May", 17], ["June", 9]],
+
+  var bar_data = {
+    data: [["Request", 12000], ["Response", 10000]],
     color: "#3c8dbc"
   };
   $.plot("#bar-chart", [bar_data], {
@@ -252,7 +157,7 @@ $(function () {
     series: {
       bars: {
         show: true,
-        barWidth: 0.5,
+        barWidth: 0.9,
         align: "center"
       }
     },
@@ -263,28 +168,28 @@ $(function () {
   });
   /* END BAR CHART */
 
-
   /*
-   * DONUT CHART
+   * Bieu do tron
    * -----------
    */
-  const donutData = [
-    {label: "Series2", data: 30, color: "#3c8dbc"},
-    {label: "Series3", data: 20, color: "#0073b7"},
-    {label: "Series4", data: 50, color: "#00c0ef"}
+
+  var donutData2 = [
+    {label: "Error", data: 5, color: "#DF0029"},
+    {label: "Access", data: 95, color: "#00A65A"}
   ];
-  $.plot("#donut-chart", donutData, {
+  $.plot("#donut-chart2", donutData2, {
     series: {
       pie: {
         show: true,
         radius: 1,
-        innerRadius: 0.5,
+        innerRadius: 0,
         label: {
           show: true,
-          radius: 2 / 3,
+          radius: 1 / 2,
           formatter: labelFormatter,
           threshold: 0.1
         }
+
       }
     },
     legend: {
@@ -292,7 +197,8 @@ $(function () {
     }
   });
   /*
-   * END DONUT CHART
+   * END DONUT CHART2
+   * Thay doi co chu trong bieu do tron trong ham labelFormatter
    */
 });
 

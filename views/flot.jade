@@ -15,6 +15,7 @@ html
         link(href='/dist/css/AdminLTE.min.css', rel='stylesheet', type='text/css')
         // AdminLTE Skins. Choose a skin from the css/skins, folder instead of downloading all of them to reduce the load.
         link(href='/dist/css/skins/_all-skins.min.css', rel='stylesheet', type='text/css')
+
         style(type="text/css").
             #logInfor span{
                 margin-right: 10px
@@ -50,7 +51,7 @@ html
                 section.content
                     // Log
                     .row
-                        .col-xs-9
+                        .col-sm-9.col-xs-12
                             // interactive chart
                             .box.box-primary
                                 .box-header.with-border
@@ -59,10 +60,10 @@ html
                                         div
                                             | EPS:
                                             b
-                                                span 12013
+                                                span#eps 0
                                 .box-body
                                     #logInfor(style='height: 200px;background-color: black; overflow-y: scroll;color: white; padding: 10px; font-size: 16px;')
-                        .col-xs-3
+                        .col-sm-3.col-xs-12
                             // interactive chart
                             .box.box-primary
                                 .box-header.with-border
@@ -73,18 +74,8 @@ html
                                         .form-group
                                             label(for='sel1') Server Tick
                                             select#sel1.form-control(multiple='')
-                                                option Server1
-                                                option Server2
-                                                option Server3
-                                                option Server4
-                                                option Server5
-                                                option Server6
-                                                option Server7
-                                                option Server8
-                                                option Server9
-                                                option Server10
-                                                option Server11
-                                                option Server12
+                                                - each server, i in serverList
+                                                    option #{server.server_name}
                     .row
                         .col-xs-12
                             // interactive chart
@@ -100,7 +91,7 @@ html
                                 .box-body
                                     #interactive(style='height: 300px;')
                     .row
-                        .col-md-6
+                        .col-xs-6
                             // Line chart
                             .box.box-primary
                                 .box-header.with-border
@@ -112,20 +103,20 @@ html
                                         button.btn.btn-box-tool(data-widget='remove')
                                             i.fa.fa-times
                                 .box-body
-                                    #line-chart(style='height: 300px;')
-                        .col-md-6
+                                    #bar-chart(style='height: 300px;width: 70%')
+                        .col-xs-6
                             // Bar chart
                             .box.box-primary
                                 .box-header.with-border
                                     i.fa.fa-bar-chart-o
-                                    h3.box-title Error/All
+                                    h3.box-title Error/Acess
                                     .box-tools.pull-right
                                         button.btn.btn-box-tool(data-widget='collapse')
                                             i.fa.fa-minus
                                         button.btn.btn-box-tool(data-widget='remove')
                                             i.fa.fa-times
                                 .box-body
-                                    #area-chart(style='height: 300px;')
+                                    #donut-chart2(style='height: 300px;')
             include ./components/footer
             // Control Sidebar
             include ./components/controlSide

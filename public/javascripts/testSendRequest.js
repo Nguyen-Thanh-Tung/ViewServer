@@ -23,15 +23,37 @@ $(document).ready(function() {
 
   update();
 
-  $('#sendRequest').on('click', () => {
+  $('#sendRequest').on('click', function() {
+    let path = '';
+    if ($(this).attr('data-sending') === '0') {
+      path = '/sendRequest';
+      $(this).text('Stop Send');
+    } else {
+      path = '/stopSend';
+      $(this).text('Send Request');
+    }
     $('.clientIp').each(function(index) {
-      const url = 'http://' + $(this).text() + ':2999/sendRequest';
+
+      const url = 'http://' + $(this).text() + ':2999' + path;
       const numberRequestPerServer = parseInt($('#rps-label').text(), 10);
       $.ajax({
         url: url,
         type: 'get',
         dataType: 'jsonp',
-        data: {number: numberRequestPerServer}
+        data: {number: numberRequestPerServer},
+        jsonpCallback: 'callback',
+        success: function(data) {
+          if (data.status === 200) {
+            if (path === '/sendRequest') {
+              $('#sendRequest').attr('data-sending', '1');
+            } else {
+              $('#sendRequest').attr('data-sending', '0');
+            }
+            toastr.success(data.message, {timeOut: 5000});
+          } else {
+            toastr.error(data.message, {timeOut: 5000});
+          }
+        }
       });
     });
   });

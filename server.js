@@ -3,7 +3,6 @@ const app = express();
 const path = require('path');
 const http = require('http');
 const server = http.createServer(app);
-// const helpers = require('./helpers/helpers');
 const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());
@@ -13,10 +12,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-// helpers.connectDatabase();
 const index = require('./routes/index');
-global.serverIp = '127.0.0.1';
+global.serverIp = null;
 
 app.use('/', index);
 

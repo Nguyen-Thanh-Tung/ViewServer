@@ -109,8 +109,8 @@ $(function () {
 
   function update() {
     // $('#logInfor').text('');
-    // $('#logInfor').append(messages);
-    // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval + 1000);
+    $('#logInfor').append(messages);
+    $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval + 1000);
     messages = '';
     interactive_plot.setData([getEventPerSecond()]);
     // Since the axes don't change, we don't need to call plot.setupGrid()

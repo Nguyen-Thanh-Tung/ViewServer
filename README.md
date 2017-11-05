@@ -1,10 +1,10 @@
 # ViewServer
 
 # Install module
-node install
+npm install
 
 # Run server:
-node server
+npm start
 
 # Home page
 http://localhost:9999

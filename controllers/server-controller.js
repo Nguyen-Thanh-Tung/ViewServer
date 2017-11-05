@@ -1,8 +1,11 @@
 const Server = require('../models/Server');
 const request = require('request');
 const constants = require('../constants/constants');
+const replace = require('replace');
+const helpers = require('../helpers/helpers');
 
 exports.getServerList = (req, res) => {
+
   const perPage = constants.numServerPerPage;
   let page = Math.max(0, req.query.page);
   if (!Number.isInteger(page)) {
@@ -80,6 +83,22 @@ exports.deleteClient = (req, res) => {
 
 exports.updateServerIp = (req, res) => {
   global.serverIp = req.body.serverIp;
+  const file = './public/javascripts/index.js';
+  replace({
+    regex: 'localhost',
+    replacement: `${global.serverIp}`,
+    paths: [file],
+    recursive: true,
+    silent: true,
+  });
+  replace({
+    regex: '127.0.0.1',
+    replacement: `${global.serverIp}`,
+    paths: ['./constants/constants.js'],
+    recursive: true,
+    silent: true,
+  });
+  helpers.connectDatabase();
   res.json({
     status: 200,
     message: 'Update success',

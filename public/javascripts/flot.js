@@ -57,10 +57,10 @@ $(function () {
       data = data.slice(1);
     // Do a random walk
     while (data.length < totalPoints) {
-      // const prev = data.length > 0 ? data[data.length - 1] : 500;
-      // let y = prev + Math.random() * 1000 - 500;
-      let y = (count - countTemp);
-      console.log(count + ':' + countTemp + ':' + y);
+      const prev = 11500;
+      let y = prev + Math.random() * 1000;
+      // let y = (count - countTemp);
+      // console.log(count + ':' + countTemp + ':' + y);
       countTemp = count;
       if (y < 0) {
         y = 0;

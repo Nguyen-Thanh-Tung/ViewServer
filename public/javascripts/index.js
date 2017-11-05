@@ -1,1 +1,1 @@
-const ws = new WebSocket('ws://localhost:8000/view');
+const ws = new WebSocket('ws://192.168.1.209:8000/view');

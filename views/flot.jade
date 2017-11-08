@@ -15,19 +15,21 @@ html
         link(href='/dist/css/AdminLTE.min.css', rel='stylesheet', type='text/css')
         // AdminLTE Skins. Choose a skin from the css/skins, folder instead of downloading all of them to reduce the load.
         link(href='/dist/css/skins/_all-skins.min.css', rel='stylesheet', type='text/css')
-
+        link(href='/plugins/toastr/toastr.min.css', rel='stylesheet', type='text/css')
         style(type="text/css").
             #logInfor span{
                 margin-right: 10px
             }
-
+            option.active{
+                background: red
+            }
         // HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries
         // WARNING: Respond.js doesn't work if you view the page via file://
         //if lt IE 9
           script(src='https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js')
           script(src='https://oss.maxcdn.com/respond/1.4.2/respond.min.js')
         script.
-    body.skin-blue.sidebar-mini
+    body.skin-blue.sidebar-mini(data-has-data='#{hasData}', data-server-id = '#{serverId}')
         .wrapper
             include ./components/header
             // Left side column. contains the logo and sidebar
@@ -58,6 +60,9 @@ html
                                     h3.box-title Log Information
                                     .box-tools.pull-right
                                         div
+                                            #stop.btn-group(data-toggle='btn-toggle', style='margin-right: 15px')
+                                                button.btn.btn-default.btn-xs.active(type='button', data-toggle='on') Start
+                                                button.btn.btn-default.btn-xs(type='button', data-toggle='off') Stop
                                             | EPS:
                                             b
                                                 span#eps 0
@@ -73,9 +78,9 @@ html
                                     div(style='height: 200px;')
                                         .form-group
                                             label(for='sel1') Server Tick
-                                            select#sel1.form-control(multiple='')
+                                            select#sel1.form-control(multiple='', style='height: 175px')
                                                 - each server, i in serverList
-                                                    option #{server.server_name}
+                                                    option(data-server-id='#{server.id}') #{server.server_name}
                     .row
                         .col-xs-12
                             // interactive chart
@@ -91,20 +96,20 @@ html
                                 .box-body
                                     #interactive(style='height: 300px;')
                     .row
-                        .col-xs-6
+                        .col-xs-8
                             // Line chart
                             .box.box-primary
                                 .box-header.with-border
                                     i.fa.fa-bar-chart-o
-                                    h3.box-title Request/Response
+                                    h3.box-title Response Time
                                     .box-tools.pull-right
                                         button.btn.btn-box-tool(data-widget='collapse')
                                             i.fa.fa-minus
                                         button.btn.btn-box-tool(data-widget='remove')
                                             i.fa.fa-times
                                 .box-body
-                                    #bar-chart(style='height: 300px;width: 70%')
-                        .col-xs-6
+                                    #line-chart(style='height: 200px', data-response-time = '#{responseTime}')
+                        .col-xs-4
                             // Bar chart
                             .box.box-primary
                                 .box-header.with-border
@@ -116,7 +121,7 @@ html
                                         button.btn.btn-box-tool(data-widget='remove')
                                             i.fa.fa-times
                                 .box-body
-                                    #donut-chart2(style='height: 300px;')
+                                    #donut-chart2(style='height: 200px;', data-rate-error='#{rateError}')
             include ./components/footer
             // Control Sidebar
             include ./components/controlSide
@@ -143,6 +148,7 @@ html
 
         // Page script
         //script(src='/dist/bundle.js', type='text/javascript')
+        script(src='/plugins/toastr/toastr.min.js', type='text/javascript')
         script(src='/javascripts/index.js', type='text/javascript')
         script(src='/javascripts/flot.js', type='text/javascript')
 

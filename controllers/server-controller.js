@@ -1,16 +1,59 @@
 const Server = require('../models/Server');
+const Report = require('../models/Report');
 const request = require('request');
 const constants = require('../constants/constants');
 const replace = require('replace');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const async = require('async');
 
 exports.getFlot = (req, res) => {
   if (!global.serverIp) {
     res.render('index');
   } else {
-    const promise = Server.find({}).select('server_name').exec();
-    promise.then((serverList) => {
-      res.render('flot', { serverList });
+    let promiseReport;
+    let serverId = '0';
+    if (req.query && req.query.serverId) {
+      serverId = req.query.serverId;
+      promiseReport = Report.find({server_id: serverId})
+        .sort({ _id: -1 })
+        .limit(60)
+        .select('error_number request_number response_time').exec();
+    } else {
+      promiseReport = Report.find({})
+        .sort({ _id: -1 })
+        .limit(60)
+        .select('error_number request_number response_time').exec();
+    }
+    const promiseServer = Server.find({}).select('server_name').exec();
+
+    const arr = [];
+    arr.push(promiseServer);
+    arr.push(promiseReport);
+    Promise.all(arr).then((data) => {
+      const serverList = data[0];
+      const reportList = data[1];
+      let numError = 0;
+      let numRequest = 0;
+      const responseTimeArr = [];
+
+      if (reportList.length === 0) {
+        const hasData = '0';
+        res.render('flot', { serverList, rateError: 0, responseTime: 0, hasData, serverId });
+      } else {
+        for(let i = 0; i < reportList.length; i++ ) {
+          numError += reportList[i].error_number;
+          numRequest += reportList[i].request_number;
+          const tempRT = reportList[i].response_time > 50 ? 50 : reportList[i].response_time;
+          responseTimeArr.push([i+1, tempRT]);
+          const responseTime = JSON.stringify(responseTimeArr);
+          if (i === reportList.length - 1) {
+            const rateError = (numError/numRequest) * 100;
+            const hasData = '1';
+            res.render('flot', { serverList, rateError, responseTime, hasData, serverId });
+          }
+        }
+      }
     });
   }
 };
@@ -109,13 +152,8 @@ exports.updateServerIp = (req, res) => {
     console.log('Connect DB success');
     global.serverIp = serverIp;
     const file = './public/javascripts/index.js';
-    replace({
-      regex: 'localhost',
-      replacement: `${global.serverIp}`,
-      paths: [file],
-      recursive: true,
-      silent: true,
-    });
+    fs.writeFile(file, `const ws = new WebSocket('ws://${global.serverIp}:8000/view');`);
+
     res.send('callback(' + JSON.stringify({
         status: 200,
         message: 'Connect success',
@@ -131,7 +169,4 @@ exports.updateServerIp = (req, res) => {
 
 };
 
-exports.getNumberError = (req, res) => {
-  const promise = Report.find({})
-}
 

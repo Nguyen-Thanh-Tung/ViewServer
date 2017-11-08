@@ -1,26 +1,29 @@
-window.onload = function() {
-  const fileInput = document.getElementById('fileInput');
-  const fileDisplayArea = document.getElementById('fileDisplayArea');
+$(document).ready(function() {
+  const hasData = $('body').attr('data-has-data');
+  if (hasData === '0') {
+    toastr.warning('There is no statistical data', { timeOut: 5000 });
+  }
+  const serverId = $('body').attr('data-server-id');
+  if (serverId !== '0') {
+    $('#sel1 option').each(function(index) {
+      if ($(this).attr('data-server-id') === serverId) {
+        $(this).addClass('active');
+      }
+    });
+  }
 
-  fileInput.addEventListener('change', function(e) {
-    const file = fileInput.files[0];
-    const textType = /text.*/;
-    if (file.type.match(textType)) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        fileDisplayArea.innerText = reader.result;
-      };
-      reader.readAsText(file);
-    } else {
-      fileDisplayArea.innerText = "File not supported!"
-    }
+  $('#sel1 option').on('click', function() {
+    const serverId = $(this).attr('data-server-id');
+    location.href = 'http://localhost:9999/flot?serverId=' + serverId;
   });
-};
+});
 
 $(function () {
   let count = 0;
   let countTemp = 0;
   let messages = '';
+  const serverId = $('body').attr('data-server-id');
+  const serverName = serverId === '0' ? '0' : $('option.active').text();
   /*
    * Real log
    */
@@ -31,13 +34,26 @@ $(function () {
 
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    for (let i = 0; i < data.length; i += 1) {
-      count += 1;
-      // messages += '<p>' + createLogString(data[i])+'</p>';
-      // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
-      // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
-      // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
+    if (serverName !== '0') {
+      for (let i = 0; i < data.length; i += 1) {
+        if (data[i].serverName == serverName) {
+          count += 1;
+          messages += '<p>' + createLogString(data[i])+'</p>';
+          // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
+          // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
+          // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
+        }
+      }
+    } else {
+      for (let i = 0; i < data.length; i += 1) {
+        count += 1;
+        messages += '<p>' + createLogString(data[i])+'</p>';
+        // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
+        // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
+        // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
+      }
     }
+
   };
 
   /*
@@ -96,22 +112,21 @@ $(function () {
     },
     yaxis: {
       min: 0,
-      max: 20000,
+      max: serverName === '0' ? 20000 : 60,
       show: true
     },
     xaxis: {
-      show: true
+      show: true,
+      max: 60,
     }
   });
 
   const updateInterval = 1000; //Fetch data ever x milliseconds
+  const updateInterval2 = 5000; //Fetch data ever x milliseconds
   let realtime = "on"; //If == to on then fetch data every x seconds. else stop fetching
+  let start = "on";
 
   function update() {
-    // $('#logInfor').text('');
-    $('#logInfor').append(messages);
-    $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval + 1000);
-    messages = '';
     interactive_plot.setData([getEventPerSecond()]);
     // Since the axes don't change, we don't need to call plot.setupGrid()
     interactive_plot.draw();
@@ -119,9 +134,20 @@ $(function () {
       setTimeout(update, updateInterval);
   }
 
+  function update2() {
+    $('#logInfor').append(messages);
+    $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, updateInterval2 + 500);
+    messages = '';
+    if (start === "on")
+      setTimeout(update2, updateInterval2);
+  }
+
   //INITIALIZE REALTIME DATA FETCHING
   if (realtime === "on") {
     update();
+  }
+  if (start === "on") {
+    update2();
   }
 
   //REALTIME TOGGLE
@@ -134,6 +160,15 @@ $(function () {
     }
     update();
   });
+  $("#stop .btn").click(function () {
+    if ($(this).data("toggle") === "on") {
+      start = "on";
+    }
+    else {
+      start = "off";
+    }
+    update2();
+  });
   /*
    * END INTERACTIVE CHART
    */
@@ -144,38 +179,40 @@ $(function () {
    * ---------
    */
 
-  var bar_data = {
-    data: [["Request", 12000], ["Response", 10000]],
-    color: "#3c8dbc"
-  };
-  $.plot("#bar-chart", [bar_data], {
-    grid: {
-      borderWidth: 1,
-      borderColor: "#f3f3f3",
-      tickColor: "#f3f3f3"
-    },
-    series: {
-      bars: {
-        show: true,
-        barWidth: 0.9,
-        align: "center"
-      }
-    },
-    xaxis: {
-      mode: "categories",
-      tickLength: 0
-    }
-  });
+  // var bar_data = {
+  //   data: [["Request", 12000], ["Response", 10000]],
+  //   color: "#3c8dbc"
+  // };
+  // $.plot("#bar-chart", [bar_data], {
+  //   grid: {
+  //     borderWidth: 1,
+  //     borderColor: "#f3f3f3",
+  //     tickColor: "#f3f3f3"
+  //   },
+  //   series: {
+  //     bars: {
+  //       show: true,
+  //       barWidth: 0.9,
+  //       align: "center"
+  //     }
+  //   },
+  //   xaxis: {
+  //     mode: "categories",
+  //     tickLength: 0
+  //   }
+  // });
   /* END BAR CHART */
+
 
   /*
    * Bieu do tron
    * -----------
    */
-
+  var error = parseFloat($('#donut-chart2').attr('data-rate-error'));
+  var access = 100 - error;
   var donutData2 = [
-    {label: "Error", data: 5, color: "#DF0029"},
-    {label: "Access", data: 95, color: "#00A65A"}
+    {label: "Error", data: error, color: "#DF0029"},
+    {label: "Access", data: access, color: "#00A65A"}
   ];
   $.plot("#donut-chart2", donutData2, {
     series: {
@@ -200,6 +237,72 @@ $(function () {
    * END DONUT CHART2
    * Thay doi co chu trong bieu do tron trong ham labelFormatter
    */
+
+
+  /*
+   * LINE CHART
+   * ----------
+   */
+  //LINE randomly generated data
+
+  var responseTime = JSON.parse($('#line-chart').attr('data-response-time'));
+  // for (var i = 10; i > 0; i -= 1) {
+  //   responseTime.push([i, 43 + Math.random()* 2]);
+  // }
+  var line_data = {
+    data: responseTime,
+    color: "#3c8dbc"
+  };
+  $.plot("#line-chart", [line_data], {
+    grid: {
+      hoverable: true,
+      borderColor: "#f3f3f3",
+      borderWidth: 0.1,
+      tickColor: "#f3f3f3"
+    },
+    series: {
+      shadowSize: 0,
+      lines: {
+        show: true
+      },
+      points: {
+        show: true
+      }
+    },
+    lines: {
+      fill: false,
+      color: ["#3c8dbc", "#f56954"]
+    },
+    yaxis: {
+      show: true,
+      min: 0,
+      max: 50,
+    },
+    xaxis: {
+      show: true
+    }
+  });
+  //Initialize tooltip on hover
+  $('<div class="tooltip-inner" id="line-chart-tooltip"></div>').css({
+    position: "absolute",
+    display: "none",
+    opacity: 0.8
+  }).appendTo("body");
+  $("#line-chart").bind("plothover", function (event, pos, item) {
+
+    if (item) {
+      var x = item.datapoint[0].toFixed(2),
+        y = item.datapoint[1].toFixed(2);
+
+      $("#line-chart-tooltip").html('response time' + " of " + x + " = " + y)
+        .css({top: item.pageY + 5, left: item.pageX + 5})
+        .fadeIn(200);
+    } else {
+      $("#line-chart-tooltip").hide();
+    }
+
+  });
+  /* END LINE CHART */
 });
 
 /*

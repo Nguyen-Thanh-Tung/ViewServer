@@ -1,5 +1,5 @@
 module.exports = {
-  numServerPerPage: 50,
+  numServerPerPage: 500,
   domain: 'http://localhost',
   pathCheckServer: '/check',
 };

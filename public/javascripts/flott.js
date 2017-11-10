@@ -3,6 +3,12 @@ $(document).ready(function() {
   if (hasData === '0') {
     toastr.warning('There is no statistical data', { timeOut: 5000 });
   }
+  const serverId = $('body').attr('data-server-id');
+  $('#sel1 option').each(function(index) {
+    if ($(this).attr('data-server-id') === serverId) {
+      $(this).addClass('active');
+    }
+  });
 
   $('#sel1 option').on('click', function() {
     const serverId = $(this).attr('data-server-id');
@@ -16,7 +22,6 @@ $(function () {
   let messages = '';
   const serverId = $('body').attr('data-server-id');
   const serverName = serverId === '0' ? '0' : $('option.active').text();
-  let start = "off";
   /*
    * Real log
    */
@@ -27,15 +32,15 @@ $(function () {
 
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
-    count += data.length;
-
-    if (start === "on") {
-      for (let i = 0; i < data.length; i += 1) {
-        messages += '<p>' + createLogString(data[i])+'</p>';
-        // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
-        // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
-        // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
-      }
+    const tempData = data.filter(function(item) {
+      return item.serverName == serverName;
+    });
+    count += tempData.length;
+    for (let i = 0; i < tempData.length; i += 1) {
+      messages += '<p>' + createLogString(data[i])+'</p>';
+      // $('#logInfor').append('<p>' + createLogString(data[i])+'</p>');
+      // $('#logInfor').scrollTop = $('#logInfor').scrollHeight;
+      // $("#logInfor").animate({ scrollTop: $('#logInfor').prop("scrollHeight")}, 100);
     }
   };
 
@@ -104,8 +109,8 @@ $(function () {
   });
 
   const updateInterval = 1000; //Fetch data ever x milliseconds
-  const updateInterval2 = 5000; //Fetch data ever x milliseconds
-
+  const updateInterval2 = 1000; //Fetch data ever x milliseconds
+  let start = "off";
 
   function update() {
     interactive_plot.setData([getEventPerSecond()]);
@@ -285,7 +290,7 @@ function labelFormatter(label, series) {
 }
 
 /*
-* Create log string
+ * Create log string
  */
 function createLogString(log) {
   const {

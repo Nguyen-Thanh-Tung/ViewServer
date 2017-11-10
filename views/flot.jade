@@ -61,8 +61,8 @@ html
                                     .box-tools.pull-right
                                         div
                                             #stop.btn-group(data-toggle='btn-toggle', style='margin-right: 15px')
-                                                button.btn.btn-default.btn-xs.active(type='button', data-toggle='on') Start
-                                                button.btn.btn-default.btn-xs(type='button', data-toggle='off') Stop
+                                                button.btn.btn-default.btn-xs(type='button', data-toggle='on') Start
+                                                button.btn.btn-default.btn-xs.active(type='button', data-toggle='off') Stop
                                             | EPS:
                                             b
                                                 span#eps 0
@@ -88,11 +88,6 @@ html
                                 .box-header.with-border
                                     i.fa.fa-bar-chart-o
                                     h3.box-title Interactive Area Chart
-                                    .box-tools.pull-right
-                                        | Real time
-                                        #realtime.btn-group(data-toggle='btn-toggle')
-                                            button.btn.btn-default.btn-xs.active(type='button', data-toggle='on') On
-                                            button.btn.btn-default.btn-xs(type='button', data-toggle='off') Off
                                 .box-body
                                     #interactive(style='height: 300px;')
                     .row
@@ -150,5 +145,8 @@ html
         //script(src='/dist/bundle.js', type='text/javascript')
         script(src='/plugins/toastr/toastr.min.js', type='text/javascript')
         script(src='/javascripts/index.js', type='text/javascript')
-        script(src='/javascripts/flot.js', type='text/javascript')
+        if serverId == '0'
+            script(src='/javascripts/flot.js', type='text/javascript')
+        else
+            script(src='/javascripts/flott.js', type='text/javascript')
 

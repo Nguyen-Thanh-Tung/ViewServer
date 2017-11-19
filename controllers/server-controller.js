@@ -44,7 +44,7 @@ exports.getFlot = (req, res) => {
         for(let i = 0; i < reportList.length; i++ ) {
           numError += reportList[i].error_number;
           numRequest += reportList[i].request_number;
-          const tempRT = reportList[i].response_time > 50 ? 50 : reportList[i].response_time;
+          const tempRT = reportList[i].response_time > constants.maxResponseTime ? constants.maxResponseTime : reportList[i].response_time;
           responseTimeArr.push([i+1, tempRT]);
           const responseTime = JSON.stringify(responseTimeArr);
           if (i === reportList.length - 1) {

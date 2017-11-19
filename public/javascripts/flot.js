@@ -28,6 +28,7 @@ $(function () {
   ws.onmessage = function (event) {
     const data = JSON.parse(event.data);
     count += data.length;
+    console.log(data.length);
 
     if (start === "on") {
       for (let i = 0; i < data.length; i += 1) {
@@ -56,8 +57,6 @@ $(function () {
       data = data.slice(1);
     // Do a random walk
     while (data.length < totalPoints) {
-      // const prev = 11500;
-      // let y = prev + Math.random() * 1000;
       let y = count;
       $('#eps').text(y);
       // console.log(count + ':' + countTemp + ':' + y);

@@ -6,7 +6,7 @@ $(document).ready(function() {
   $("#slider").slider({
     animate: true,
     value:1,
-    min: 0,
+    min: 1,
     max: 30,
     step: 1,
     slide: function(event, ui) {
@@ -16,9 +16,9 @@ $(document).ready(function() {
 
 
   //Added, set initial value.
-  $("#rps").val(0);
+  $("#rps").val(1);
   $("#numServer").val($numberServer);
-  $("#rps-label").text(0);
+  $("#rps-label").text(1);
   $("#numServer-label").text($numberServer);
 
   update();
